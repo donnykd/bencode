@@ -1,19 +1,26 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
-func decodeInt(s string) (string, error) {
+func decodeInt(s string) (int, error) {
 	var lastIndex int
 	for i := 1; i < len(s); i++ {
 		if s[i] == 'e' {
 			lastIndex = i
-			break;
+			break
 		}
 	}
 	if lastIndex == 0 {
-		return "", fmt.Errorf("invalid encoded int %v", s)
+		return 0, fmt.Errorf("invalid encoded int %v", s)
 	}
-	return "", nil
+	result, err := strconv.Atoi(string(s[1:lastIndex]))
+	if err != nil{
+		return 0, fmt.Errorf("Failed to parse %v as integer", s)
+	}
+	return result, nil
 }
 
 func decodeByteString(s string) (string, error) {
