@@ -14,17 +14,39 @@ func decodeInt(s string) (int, error) {
 		}
 	}
 	if lastIndex == 0 {
-		return 0, fmt.Errorf("invalid encoded int %v", s)
+		return 0, fmt.Errorf("no end character found in s: %v", s)
 	}
-	result, err := strconv.Atoi(string(s[1:lastIndex]))
-	if err != nil{
+	result, err := strconv.Atoi(s[1:lastIndex])
+	if err != nil {
 		return 0, fmt.Errorf("Failed to parse %v as integer", s)
 	}
 	return result, nil
 }
 
-func decodeByteString(s string) (string, error) {
-	return "", nil
+func decodeByteString(s string) ([]byte, error) {
+	//8:elephant
+	var colonIndex int
+	for i := 0; i < len(s); i++ {
+		if s[i] == ':' {
+			colonIndex = i
+			break
+		}
+	}
+
+	if colonIndex == 0 {
+		return nil, fmt.Errorf("no length found before colon in s: %v", s)
+	}
+
+	length, err := strconv.Atoi(s[:colonIndex])
+	if err != nil {
+		return nil, fmt.Errorf("Failed to get length of s: %v", s)
+	}
+
+	byteString := make([]byte, length)
+
+	copy(byteString, s[colonIndex+1:colonIndex+1+length])
+
+	return byteString, nil
 }
 
 func decodeList(s string) (string, error) {
